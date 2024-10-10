@@ -4,33 +4,29 @@
     <form v-on:submit.prevent="editBlog">
       <p>title: <input type="text" v-model="blog.title" /></p>
       <transition name="fade">
-        <div class="thumbnail-pic" v-if="blog.thumbnail != 'null'">
+        <div
+          class="thumbnail-pic"
+          v-if="blog.thumbnail && blog.thumbnail !== 'null'"
+        >
           <img :src="BASE_URL + blog.thumbnail" alt="thumbnail" />
         </div>
       </transition>
-      <form enctype="multipart/form-data" novalidate>
-        <div class="dropbox">
-          <input
-            type="file"
-            multiple
-            :name="uploadFieldName"
-            :disabled="isSaving"
-            @change="
-              filesChange($event.target.name, $event.target.files);
-              fileCount = $event.target.files.length;
-            "
-            accept="image/*"
-            class="input-file"
-          />
-          <!-- <p v-if="isInitial || isSuccess"> -->
-          <p v-if="isInitial">
-            Drag your file(s) here to begin<br />
-            or click to browse
-          </p>
-          <p v-if="isSaving">Uploading {{ fileCount }} files...</p>
-          <p v-if="isSuccess">Upload Successful.</p>
-        </div>
-      </form>
+      <div class="dropbox">
+        <input
+          type="file"
+          multiple
+          :name="uploadFieldName"
+          :disabled="isSaving"
+          @change="filesChange($event.target.name, $event.target.files)"
+          accept="image/*"
+          class="input-file"
+        />
+        <p v-if="isInitial">
+          Drag your file(s) here to begin<br />or click to browse
+        </p>
+        <p v-if="isSaving">Uploading {{ fileCount }} files...</p>
+        <p v-if="isSuccess">Upload Successful.</p>
+      </div>
       <transition-group tag="ul" class="pictures">
         <li v-for="picture in pictures" v-bind:key="picture.id">
           <img
@@ -40,7 +36,7 @@
           />
           <br />
           <button v-on:click.prevent="useThumbnail(picture.name)">
-            Thumbnail
+            Set as Thumbnail
           </button>
           <button v-on:click.prevent="delFile(picture)">Delete</button>
         </li>
@@ -56,12 +52,13 @@
       <p>category: <input type="text" v-model="blog.category" /></p>
       <p>status: <input type="text" v-model="blog.status" /></p>
       <p>
-        <button type="submit">update blog</button>
+        <button type="submit">Update Blog</button>
         <button v-on:click="navigateTo('/blogs')">กลับ</button>
       </p>
     </form>
   </div>
 </template>
+
 <script>
 import BlogsService from "@/services/BlogsService";
 import VueCkeditor from "vue-ckeditor2";

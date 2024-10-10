@@ -4,26 +4,23 @@
     <p><button v-on:click="logout">Logout</button></p>
     <h4>จำนวน blog {{ blogs.length }}</h4>
     <p><button v-on:click="navigateTo('/blog/create')">สร้าง blog</button></p>
-    <div v-for="blog in blogs" v-bind:key="blog.id">
-      <img
-        :src="BASE_URL + blog.thumbnail"
-        alt="Blog Thumbnail"
-        v-if="blog.thumbnail"
-        class="blog-thumbnail"
-      />
-      <p>id: {{ blog.id }}</p>
-      <p>title: {{ blog.title }}</p>
-      <p>content: {{ blog.content }}</p>
-      <p>category: {{ blog.category }}</p>
-      <p>status: {{ blog.status }}</p>
-      <p>
-        <button v-on:click="navigateTo('/blog/' + blog.id)">ดู blog</button>
-        <button v-on:click="navigateTo('/blog/edit/' + blog.id)">
-          แก้ไข blog
-        </button>
-        <button v-on:click="deleteBlog(blog)">ลบข้อมูล</button>
-      </p>
-      <hr />
+    <div class="blog-container">
+      <div v-for="blog in blogs" v-bind:key="blog.id" class="blog-card">
+        <img
+          :src="BASE_URL + blog.thumbnail"
+          alt="Blog Thumbnail"
+          v-if="blog.thumbnail"
+          class="blog-thumbnail"
+        />
+        <p>id: {{ blog.id }}</p>
+        <p>title: {{ blog.title }}</p>
+        <p>
+          <button v-on:click="navigateTo('/blog/' + blog.id)">
+            ดูรายละเอียด
+          </button>
+        </p>
+        <hr />
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +32,7 @@ export default {
   data() {
     return {
       blogs: [],
-      BASE_URL: "http://localhost:8081/assets/uploads/", // กำหนด BASE_URL
+      BASE_URL: "http://localhost:8081/assets/uploads/",
     };
   },
   async created() {
@@ -50,23 +47,13 @@ export default {
     navigateTo(route) {
       this.$router.push(route);
     },
-    async deleteBlog(blog) {
-      let result = confirm("Want to delete?");
-      if (result) {
-        try {
-          await BlogsService.delete(blog);
-          await this.refreshData(); // เรียก refreshData หลังจากลบ
-        } catch (err) {
-          console.error("Error deleting blog:", err); // ปรับปรุงการจัดการข้อผิดพลาด
-          alert("Error deleting blog. Please try again."); // แจ้งผู้ใช้
-        }
-      }
-    },
     async refreshData() {
       try {
-        this.blogs = (await BlogsService.index()).data;
+        const response = await BlogsService.index();
+        this.blogs = response.data || []; // ตรวจสอบข้อมูล
       } catch (err) {
         console.error("Error fetching blogs:", err);
+        alert("Error fetching blogs. Please try again."); // แจ้งผู้ใช้
       }
     },
   },
@@ -74,6 +61,17 @@ export default {
 </script>
 
 <style scoped>
+.blog-container {
+  display: flex; /* ใช้ Flexbox */
+  flex-wrap: wrap; /* ให้ยืดหยุ่นในแถว */
+  justify-content: space-between; /* จัดเรียงให้มีช่องว่างระหว่างบล็อก */
+}
+
+.blog-card {
+  width: calc(50% - 10px); /* ขนาดของแต่ละบล็อก */
+  margin-bottom: 20px; /* ระยะห่างระหว่างแถว */
+}
+
 .blog-thumbnail {
   max-width: 200px; /* ปรับขนาดภาพ thumbnail */
   height: auto; /* ให้รักษาสัดส่วนของภาพ */
