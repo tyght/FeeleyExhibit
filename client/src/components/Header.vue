@@ -1,60 +1,53 @@
 <template>
-  <div>
-    <div class="nv-navbar">
-      <ul class="nav">
-        <li><router-link :to="{ name: 'blogs' }">Blogs</router-link></li>
-        <li><router-link :to="{ name: 'users' }">Users</router-link></li>
-        <li><router-link :to="{ name: 'comments' }">Comments</router-link></li>
-        <li><router-link :to="{ name: 'login' }">Login</router-link></li>
+  <div class="header">
+    <h1>FeeleyExhibit</h1>
+    <nav>
+      <ul>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/profile">Profile</router-link></li>
+        <li><router-link to="/notifications">Notifications</router-link></li>
+        <li><button @click="logout">Logout</button></li>
       </ul>
-    </div>
+    </nav>
   </div>
 </template>
+
 <script>
 export default {
+  name: "Header",
   methods: {
-    isLogin() {
-      return this.$store.getters.isUserLoggedIn;
-    },
     logout() {
-      this.$store.dispatch("logout");
+      this.$store.dispatch("setToken", null);
       this.$router.push({ name: "login" });
     },
   },
 };
 </script>
+
 <style scoped>
-.nv-navbar {
-  background-color: palegoldenrod;
-  width: 100%;
-  height: 20px;
-  padding: 10px 0px 10px 0px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #4caf50;
+  color: white;
 }
-.nv-navbar .nav {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  float: left;
+nav ul {
+  list-style-type: none;
+  display: flex;
+  gap: 20px;
 }
-.nv-navbar .nav li {
-  float: left;
+nav li {
+  cursor: pointer;
 }
-.nv-navbar .nav li a {
-  padding: 10px;
-  text-decoration: none;
-  color: gray;
-  font-weight: bold;
+button {
+  background-color: transparent;
+  color: white;
+  border: none;
+  cursor: pointer;
 }
-.nv-navbar .nav li a:hover {
-  padding: 10px;
-  text-decoration: none;
-  color: darkslategrey;
-}
-.nv-navbar .nav li a.router-link-active {
-  background-color: gold;
-  color: darkslategrey;
-}
-.clearfix {
-  clear: left;
+button:hover {
+  text-decoration: underline;
 }
 </style>

@@ -1,8 +1,8 @@
-// PostArtwork.vue
+// EditArtwork.vue
 <template>
   <div>
-    <h1>Post Your Artwork</h1>
-    <form @submit.prevent="submitArtwork">
+    <h1>Edit Artwork</h1>
+    <form @submit.prevent="updateArtwork">
       <div>
         <label for="title">Title:</label>
         <input type="text" v-model="artwork.title" id="title" required />
@@ -33,28 +33,48 @@
           placeholder="Comma separated tags"
         />
       </div>
+      <div v-if="artwork.imageUrl">
+        <img
+          :src="artwork.imageUrl"
+          alt="Artwork Image"
+          class="artwork-image"
+        />
+      </div>
       <div>
-        <label for="file">Upload Image:</label>
+        <label for="file">Update Image:</label>
         <input type="file" @change="onFileChange" id="file" accept="image/*" />
       </div>
-      <button type="submit">Post Artwork</button>
+      <button type="submit">Update Artwork</button>
     </form>
   </div>
 </template>
 
 <script>
 export default {
-  name: "PostArtwork",
+  name: "EditArtwork",
   data() {
     return {
       artwork: {
+        id: null,
         title: "",
         description: "",
         category: "painting",
         tags: "",
         image: null,
+        imageUrl: "",
       },
     };
+  },
+  async created() {
+    try {
+      const artworkId = this.$route.params.artworkId;
+      const response = await this.$store.dispatch("fetchArtwork", artworkId);
+      this.artwork = response.data;
+      this.artwork.imageUrl = response.data.image;
+    } catch (error) {
+      console.error("Error fetching artwork:", error);
+      alert("Failed to load artwork details. Please try again.");
+    }
   },
   methods: {
     onFileChange(event) {
@@ -63,7 +83,7 @@ export default {
         this.artwork.image = file;
       }
     },
-    async submitArtwork() {
+    async updateArtwork() {
       const formData = new FormData();
       formData.append("title", this.artwork.title);
       formData.append("description", this.artwork.description);
@@ -73,11 +93,14 @@ export default {
         formData.append("image", this.artwork.image);
       }
       try {
-        await this.$store.dispatch("postArtwork", formData);
+        await this.$store.dispatch("updateArtwork", {
+          artworkId: this.artwork.id,
+          formData,
+        });
         this.$router.push({ name: "home" });
       } catch (error) {
-        console.error("Error posting artwork:", error);
-        alert("Failed to post artwork. Please try again.");
+        console.error("Error updating artwork:", error);
+        alert("Failed to update artwork. Please try again.");
       }
     },
   },
@@ -85,6 +108,12 @@ export default {
 </script>
 
 <style scoped>
+.artwork-image {
+  width: 150px;
+  height: auto;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
 form {
   display: flex;
   flex-direction: column;
