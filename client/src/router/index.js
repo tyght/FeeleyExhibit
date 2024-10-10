@@ -1,80 +1,80 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-import UserIndex from '@/components/User/index'
-import UserEdit from '@/components/User/EditUser'
-import UserCreate from '@/components/User/CreateUser'
-import UserShow from '@/components/User/ShowUser'
-import Login from '@/components/Login'
+import UserIndex from "@/components/UserProfile/UserIndex.vue";
+import UserEdit from "@/components/UserProfile/EditUser.vue";
+import UserCreate from "@/components/UserProfile/CreateUser.vue";
+import UserShow from "@/components/UserProfile/UserProfile.vue";
+import Login from "@/components/Authentication/Login.vue";
 
-import CommentIndex from '@/components/Comments/index' 
+import CommentIndex from "@/components/Interaction/CommentsSection.vue";
 
-import BlogIndex from '@/components/Blogs/index'
-import BlogCreate from '@/components/Blogs/CreateBlog'
-import BlogShow from '@/components/Blogs/ShowBlog'
-import BlogEdit from '@/components/Blogs/EditBlog'
+import ArtworkList from "@/components/ArtManagement/ArtworkList.vue";
+import PostArtwork from "@/components/ArtManagement/PostArtwork.vue";
+import ArtworkDetail from "@/components/ArtManagement/ArtworkDetail.vue";
+import EditArtwork from "@/components/ArtManagement/EditArtwork.vue";
 
-import Upload from '@/components/Util/Upload'
+import NotificationList from "@/components/Notifications/NotificationList.vue";
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
-  mode: 'history',
+  mode: "history",
   routes: [
     {
-      path: '/users',
-      name: 'users',
-      component: UserIndex
+      path: "/users",
+      name: "users",
+      component: UserIndex,
     },
     {
-      path: '/user/edit/:userId',
-      name: 'user-edit',
-      component: UserEdit
+      path: "/user/edit/:userId",
+      name: "user-edit",
+      component: UserEdit,
     },
     {
-      path: '/user/create',
-      name: 'user-create',
-      component: UserCreate
+      path: "/user/create",
+      name: "user-create",
+      component: UserCreate,
     },
     {
-      path: '/user/:userId',
-      name: 'user',
-      component: UserShow
+      path: "/user/:userId",
+      name: "user",
+      component: UserShow,
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login
+      path: "/login",
+      name: "login",
+      component: Login,
     },
     {
-      path: '/blogs',
-      name: 'blogs',
-      component: BlogIndex
+      path: "/artworks",
+      name: "artworks",
+      component: ArtworkList,
     },
     {
-      path: '/blog/create',
-      name: 'blog-create',
-      component: BlogCreate
+      path: "/artwork/create",
+      name: "artwork-create",
+      component: PostArtwork,
     },
     {
-      path: '/blog/edit/:blogId',
-      name: 'blog-edit',
-      component: BlogEdit
+      path: "/artwork/edit/:artworkId",
+      name: "artwork-edit",
+      component: EditArtwork,
     },
     {
-      path: '/blog/:blogId',
-      name: 'blog',
-      component: BlogShow
+      path: "/artwork/:artworkId",
+      name: "artwork",
+      component: ArtworkDetail,
     },
     {
-      path: '/comments',
-      name: 'comments',
-      component: CommentIndex
+      path: "/comments",
+      name: "comments",
+      component: CommentIndex,
     },
     {
-      path: '/upload',
-      name: 'upload',
-      component: Upload
+      path: "/notifications",
+      name: "notifications",
+      component: NotificationList,
     },
-  ]
-})
+  ],
+});
