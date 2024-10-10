@@ -1,28 +1,32 @@
-let express = require('express');
+// app.js
+let express = require("express");
 // import body parser
-let bodyParser = require('body-parser');
-const cors = require('cors');
-const { sequelize } = require('./models');
-const config = require('./config/config');
-
+let bodyParser = require("body-parser");
+const cors = require("cors");
+const { sequelize } = require("./models");
+const config = require("./config/config");
 
 const app = express();
 // use body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use('/assets', express.static('public'));
+app.use("/assets", express.static("public"));
 
 // import routes
-
-require('./userPassport');
-require('./routes')(app);
-
+require("./userPassport");
+require("./routes")(app);
 
 let port = config.port;
 
-sequelize.sync({ force: false }).then(() => {
+// sync sequelize and start server
+sequelize
+  .sync({ force: false })
+  .then(() => {
     app.listen(port, function () {
-        console.log('Server running on ' + port)
-    })
-})
+      console.log("Server running on port " + port);
+    });
+  })
+  .catch((error) => {
+    console.error("Unable to connect to the database:", error);
+  });

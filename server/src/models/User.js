@@ -1,38 +1,36 @@
-const Promise = require('bluebird')
-const bcrypt = Promise.promisifyAll(require('bcrypt-nodejs'))
-function hashPassword(user, options) {
-    const SALT_FACTOR = 8
-    if (!user.changed('password')) {
-        return
-    }
-    return bcrypt
-        .genSaltAsync(SALT_FACTOR)
-        .then(salt => bcrypt.hashAsync(user.password, salt, null))
-        .then(hash => {
-            user.setDataValue('password', hash)
-        })
-}
+// models/User.js
+const { DataTypes, Model } = require("sequelize");
+const sequelize = require("../config/config");
 
-module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
-        email: DataTypes.STRING,
-        password: DataTypes.STRING,
-        name: DataTypes.STRING,
-        lastname: DataTypes.STRING,
-        status: DataTypes.STRING,
-        type: DataTypes.STRING
-    }, {
-        hooks: {
-            beforeCreate: hashPassword,
-            beforeUpdate: hashPassword
-        }
-    })
+class User extends Model {}
 
-    User.prototype.comparePassword = function (password) {
-        return bcrypt.compareSync(password, this.password)
-    }
+User.init(
+  {
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    profilePicture: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "User",
+  }
+);
 
-    User.associate = function (models) { }
-
-    return User
-}
+module.exports = User;

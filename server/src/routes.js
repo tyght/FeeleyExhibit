@@ -1,60 +1,40 @@
-const UserController = require("./controllers/UserController");
+// routes.js
 const UserAuthenController = require("./controllers/UserAuthenController");
-const isAuthenController = require("./authen/isAuthenController");
 const ArtworkController = require("./controllers/ArtworkController");
-const multer = require("multer");
+const isAuthenController = require("./authen/isAuthenController");
+let multer = require("multer");
 
 // upload section
 let storage = multer.diskStorage({
-    destination: function(req, file, callback) {
-        callback(null, "./public/uploads");
-    },
-    filename: function(req, file, callback) {
-        console.log(file);
-        callback(null, file.originalname);
-    },
+  destination: function (req, file, callback) {
+    callback(null, "./public/uploads");
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.originalname);
+  },
 });
-let upload = multer({ storage: storage }).array("artworkPhotos", 10);
+let upload = multer({ storage: storage }).single("artworkImage");
 
 module.exports = (app) => {
-    app.get("/users", isAuthenController, UserController.index);
-    app.get("/user/:userId", UserController.show);
-    app.post("/user", UserController.create);
-    app.put("/user/:userId", UserController.put);
-    app.delete("/user/:userId", UserController.remove);
-    app.post("/login", UserAuthenController.login);
+  app.post("/register", UserAuthenController.register);
+  app.post("/login", UserAuthenController.login);
 
-    app.post("/artwork", ArtworkController.create);
-    app.put("/artwork/:artworkId", ArtworkController.put);
-    app.delete("/artwork/:artworkId", ArtworkController.remove);
-    app.get("/artwork/:artworkId", ArtworkController.show);
-    app.get("/artworks", ArtworkController.index);
+  app.post("/artworks", isAuthenController, upload, ArtworkController.create);
+  app.get("/artworks", ArtworkController.index);
+  app.get("/artworks/:artworkId", ArtworkController.show);
+  app.put("/artworks/:artworkId", isAuthenController, ArtworkController.update);
+  app.delete(
+    "/artworks/:artworkId",
+    isAuthenController,
+    ArtworkController.remove
+  );
 
-    app.post("/upload", function(req, res) {
-        upload(req, res, function(err) {
-            if (err) {
-                return res.end("Error uploading file.");
-            }
-            res.end("File is uploaded");
-        });
+  app.post("/upload", isAuthenController, function (req, res) {
+    upload(req, res, function (err) {
+      if (err) {
+        return res.status(500).send("Error uploading file.");
+      }
+      res.status(200).send("File is uploaded");
     });
-
-    app.post("/upload/delete", async function(req, res) {
-        try {
-            const fs = require("fs");
-            console.log(req.body.filename);
-
-            fs.unlink(
-                process.cwd() + "/public/uploads/" + req.body.filename,
-                (err) => {
-                    if (err) throw err;
-                    res.send("Delete successful");
-                }
-            );
-        } catch (err) {
-            res.status(500).send({
-                error: "An error has occurred trying to delete the material file",
-            });
-        }
-    });
+  });
 };

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import ArtworkList from "@/components/Art Management/ArtworkList.vue";
+import ArtworkList from "@/components/ArtManagement/ArtworkList.vue";
 
 export default {
   name: "UserProfile",
