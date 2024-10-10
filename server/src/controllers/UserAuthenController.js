@@ -1,53 +1,46 @@
-const {User} = require('../models');
-const config = require('../config/config');
-const jwt = require('jsonwebtoken');
-
-function jwtSignUser (user) {
-    const ONE_WEEK = 60 * 60 * 24 * 7;
-    return jwt.sign(user, config.authentication.jwtSecret, {
-        expiresIn: ONE_WEEK
-    })
-}
+// controllers/UserAuthenController.js
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 
 module.exports = {
-    async register (req, res) {
+    async register(req, res) {
         try {
-            const user = await User.create(req.body);
-            res.send(user.toJSON());
+            const { username, email, password } = req.body;
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = await User.create({
+                username,
+                email,
+                password: hashedPassword,
+            });
+            res.status(201).send(user);
         } catch (err) {
-            res.status(400).send({
-                error: 'The content information was incorrect'
-            })
+            res.status(500).send({ error: "มีข้อผิดพลาดในการลงทะเบียนผู้ใช้" });
         }
     },
-    async login (req, res) {
+
+    async login(req, res) {
         try {
-            const {email, password} = req.body;
-            const user = await User.findOne({
-                where: {
-                    email: email
-                }
-            });
+            const { email, password } = req.body;
+            const user = await User.findOne({ where: { email } });
             if (!user) {
-                return res.status(403).send({
-                    error: 'User/Password was incorrect'
-                })
+                return res
+                    .status(401)
+                    .send({ error: "ไม่พบผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
             }
-            const isPasswordValid = await user.comparePassword(password);
+            const isPasswordValid = await bcrypt.compare(password, user.password);
             if (!isPasswordValid) {
-                return res.status(403).send({
-                    error: 'User/Password was incorrect'
-                })
+                return res
+                    .status(401)
+                    .send({ error: "ไม่พบผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
             }
-            const userJson = user.toJSON();
-            res.send({
-                user: userJson,
-                token: jwtSignUser(userJson)
-            })
+            const token = jwt.sign({ id: user.id }, config.jwtSecret, {
+                expiresIn: "1h",
+            });
+            res.status(200).send({ user, token });
         } catch (err) {
-            res.status(500).send({
-                error: 'Error! from get user'
-            })
+            res.status(500).send({ error: "มีข้อผิดพลาดในการเข้าสู่ระบบ" });
         }
-    }
-}
+    },
+};
