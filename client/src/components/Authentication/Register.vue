@@ -1,4 +1,3 @@
-// Register.vue
 <template>
   <div>
     <h1>Register</h1>
@@ -16,6 +15,7 @@
         <input type="password" v-model="user.password" />
       </p>
       <button type="submit">Register</button>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
@@ -32,15 +32,18 @@ export default {
         email: "",
         password: "",
       },
+      errorMessage: "",
     };
   },
   methods: {
     async register() {
       try {
         await AuthenService.register(this.user);
-        this.$router.push({ name: "Login" });
+        this.$router.push({ name: "login" });
       } catch (err) {
         console.error("Registration failed:", err);
+        this.errorMessage =
+          err.response?.data?.error || "Registration failed. Please try again.";
       }
     },
   },
@@ -62,5 +65,9 @@ input {
 }
 button {
   padding: 10px 20px;
+}
+.error {
+  color: red;
+  font-weight: bold;
 }
 </style>

@@ -1,4 +1,3 @@
-// Login.vue
 <template>
   <div>
     <h1>Login</h1>
@@ -11,7 +10,12 @@
         <label for="password">Password:</label>
         <input type="password" v-model="credentials.password" />
       </p>
-      <button type="submit">Login</button>
+      <div class="button-group">
+        <button type="submit" class="action-button">Login</button>
+        <button @click.prevent="goToRegister" class="action-button">
+          Register
+        </button>
+      </div>
     </form>
   </div>
 </template>
@@ -38,6 +42,9 @@ export default {
         console.error("Login failed:", err);
       }
     },
+    goToRegister() {
+      this.$router.push({ name: "register" });
+    },
   },
 };
 </script>
@@ -55,7 +62,20 @@ input {
   padding: 8px;
   margin-bottom: 10px;
 }
-button {
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+.action-button {
   padding: 10px 20px;
+  margin: 10px 0;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.action-button:hover {
+  background-color: #45a049;
 }
 </style>

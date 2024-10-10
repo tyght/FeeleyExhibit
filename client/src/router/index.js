@@ -6,6 +6,7 @@ import UserEdit from "@/components/UserProfile/EditUser.vue";
 import UserCreate from "@/components/UserProfile/CreateUser.vue";
 import UserShow from "@/components/UserProfile/UserProfile.vue";
 import Login from "@/components/Authentication/Login.vue";
+import Register from "@/components/Authentication/Register.vue";
 
 import CommentIndex from "@/components/Interaction/CommentsSection.vue";
 
@@ -18,7 +19,7 @@ import NotificationList from "@/components/Notifications/NotificationList.vue";
 
 Vue.use(Router);
 
-export default new Router({
+const router = new Router({
   mode: "history",
   routes: [
     {
@@ -45,6 +46,11 @@ export default new Router({
       path: "/login",
       name: "login",
       component: Login,
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: Register,
     },
     {
       path: "/artworks",
@@ -78,3 +84,18 @@ export default new Router({
     },
   ],
 });
+
+// การตรวจสอบการเข้าสู่ระบบ
+router.beforeEach((to, from, next) => {
+  const publicPages = ["/login", "/register"];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem("user");
+
+  if (authRequired && !loggedIn) {
+    return next("/login");
+  }
+
+  next();
+});
+
+export default router;
