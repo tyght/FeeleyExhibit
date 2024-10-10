@@ -86,7 +86,7 @@ export default {
       BASE_URL: "http://localhost:8081/assets/uploads/",
       error: null,
       uploadError: null,
-      currentStatus: null,
+      currentStatus: STATUS_INITIAL,
       uploadFieldName: "userPhoto",
       uploadedFileNames: [],
       pictures: [],
@@ -121,14 +121,12 @@ export default {
     },
     async createBlog() {
       this.blog.pictures = JSON.stringify(this.pictures);
-      console.log("JSON.stringify: ", this.blog);
       try {
         await BlogsService.post(this.blog);
-        this.$router.push({
-          name: "blogs",
-        });
+        this.$router.push({ name: "blogs" });
       } catch (err) {
         console.log(err);
+        alert("Failed to create blog. Please try again."); // แจ้งผู้ใช้เมื่อเกิดข้อผิดพลาด
       }
     },
     onBlur(editor) {
@@ -136,15 +134,6 @@ export default {
     },
     onFocus(editor) {
       console.log(editor);
-    },
-    navigateTo(route) {
-      console.log(route);
-      this.$router.push(route);
-    },
-    wait(ms) {
-      return (x) => {
-        return new Promise((resolve) => setTimeout(() => resolve(x), ms));
-      };
     },
     async save(formData) {
       try {
@@ -177,9 +166,7 @@ export default {
       this.save(formData);
     },
     clearUploadResult() {
-      setTimeout(() => {
-        this.reset();
-      }, 5000);
+      setTimeout(() => this.reset(), 5000);
     },
     useThumbnail(filename) {
       this.blog.thumbnail = filename;
@@ -201,9 +188,6 @@ export default {
   },
   components: {
     VueCkeditor,
-  },
-  created() {
-    this.currentStatus = STATUS_INITIAL;
   },
 };
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <back-header /> -->
     <h1>Upload Material:</h1>
     <form enctype="multipart/form-data" novalidate>
       <div class="dropbox">
@@ -9,24 +8,23 @@
           multiple
           :name="uploadFieldName"
           :disabled="isSaving"
-          @change="
-            filesChange($event.target.name, $event.target.files);
-            fileCount = $event.target.files.length;
-          "
+          @change="handleFileChange($event)"
           accept="image/*"
           class="input-file"
         />
-        <!-- <p v-if="isInitial || isSuccess"> -->
         <p v-if="isInitial">
           Drag your file(s) here to begin<br />
           or click to browse
         </p>
         <p v-if="isSaving">Uploading {{ fileCount }} files...</p>
         <p v-if="isSuccess">Upload Successful.</p>
+        <p v-if="isFailed">Upload Failed. Please try again.</p>
+        <!-- แจ้งเตือนเมื่อเกิดข้อผิดพลาด -->
       </div>
     </form>
   </div>
 </template>
+
 <script>
 import UploadService from "../../services/UploadService";
 
@@ -40,59 +38,42 @@ export default {
     return {
       BASE_URL: "http://localhost:8081/assets/uploads/",
       error: null,
-      // uploadedFiles: [],
       uploadError: null,
-      currentStatus: null,
+      currentStatus: STATUS_INITIAL, // ตั้งค่าเริ่มต้น
       uploadFieldName: "userPhoto",
       uploadedFileNames: [],
+      fileCount: 0, // เพิ่มเพื่อแสดงจำนวนไฟล์
     };
   },
-  created(){
-    this.currentStatus = STATUS_INITIAL;
-  },
   methods: {
-    navigateTo(route) {
-      console.log(route);
-      this.$router.push(route);
-    },
-    wait(ms) {
-      return (x) => {
-        return new Promise((resolve) => setTimeout(() => resolve(x), ms));
-      };
-    },
-    reset() {
-      // reset form to initial state
-      this.currentStatus = STATUS_INITIAL;
-      // this.uploadedFiles = []
-      this.uploadError = null;
-      this.uploadedFileNames = [];
+    handleFileChange(event) {
+      const fileList = event.target.files;
+      if (fileList.length) {
+        this.fileCount = fileList.length; // อัปเดตจำนวนไฟล์
+        const formData = new FormData();
+        Array.from(fileList).forEach((file) => {
+          formData.append(this.uploadFieldName, file, file.name);
+          this.uploadedFileNames.push(file.name);
+        });
+        this.save(formData);
+      }
     },
     async save(formData) {
-      // upload data to the server
       try {
         this.currentStatus = STATUS_SAVING;
         await UploadService.upload(formData);
         this.currentStatus = STATUS_SUCCESS;
         this.clearUploadResult();
       } catch (error) {
-        console.log(error);
-        this.currentStatus = STATUS_FAILED;
+        console.error(error);
+        this.currentStatus = STATUS_FAILED; // ตั้งค่าสถานะผิดพลาด
+        alert("Failed to upload files. Please try again."); // แจ้งเตือนผู้ใช้
       }
     },
-    filesChange(fieldName, fileList) {
-      // handle file changes
-      const formData = new FormData();
-      if (!fileList.length) return;
-      // append the files to FormData
-      Array.from(Array(fileList.length).keys()).map((x) => {
-        formData.append(fieldName, fileList[x], fileList[x].name);
-        this.uploadedFileNames.push(fileList[x].name);
-      });
-      // save it
-      this.save(formData);
-    },
-    clearUploadResult: function () {
-      setTimeout(() => this.reset(), 5000);
+    clearUploadResult() {
+      setTimeout(() => {
+        this.currentStatus = STATUS_INITIAL; // รีเซ็ตสถานะ
+      }, 5000);
     },
   },
   computed: {
@@ -111,14 +92,15 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .dropbox {
-  outline: 2px dashed grey; /* the dash box */
+  outline: 2px dashed grey;
   outline-offset: -10px;
   background: lemonchiffon;
   color: dimgray;
   padding: 10px 10px;
-  min-height: 200px; /* minimum height */
+  min-height: 200px;
   position: relative;
   cursor: pointer;
 }
@@ -129,12 +111,9 @@ export default {
   position: absolute;
   cursor: pointer;
 }
-
 .dropbox:hover {
-  background: khaki; /* when mouse over to the drop zone, change color 
-*/
+  background: khaki;
 }
-
 .dropbox p {
   font-size: 1.2em;
   text-align: center;
