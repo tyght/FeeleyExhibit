@@ -1,4 +1,3 @@
-// Login.vue
 <template>
   <div>
     <h1>Login</h1>
@@ -12,6 +11,10 @@
         <input type="password" v-model="credentials.password" />
       </p>
       <button type="submit">Login</button>
+      <p>
+        ยังไม่มีบัญชีใช่ไหม?
+        <button @click="goToRegister" class="register-button">Register</button>
+      </p>
     </form>
   </div>
 </template>
@@ -33,10 +36,17 @@ export default {
     async login() {
       try {
         await AuthenService.login(this.credentials);
-        this.$router.push({ name: "HomePage" });
+        this.$router.push({ name: "HomePage" }).catch((err) => {
+          if (err.name !== "NavigationDuplicated") {
+            throw err;
+          }
+        });
       } catch (err) {
         console.error("Login failed:", err);
       }
+    },
+    goToRegister() {
+      this.$router.push({ name: "register" }); // ใช้ router push เพื่อย้ายไปหน้า Register.vue
     },
   },
 };
@@ -57,5 +67,12 @@ input {
 }
 button {
   padding: 10px 20px;
+}
+.register-button {
+  background: none;
+  border: none;
+  color: blue;
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

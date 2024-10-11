@@ -6,6 +6,7 @@ import UserEdit from "@/components/UserProfile/EditUser.vue";
 import UserCreate from "@/components/UserProfile/CreateUser.vue";
 import UserShow from "@/components/UserProfile/UserProfile.vue";
 import Login from "@/components/Authentication/Login.vue";
+import Register from "@/components/Authentication/Register.vue"; // เพิ่มการนำเข้า Register.vue
 
 import CommentIndex from "@/components/Interaction/CommentsSection.vue";
 
@@ -21,6 +22,16 @@ Vue.use(Router);
 export default new Router({
   mode: "history",
   routes: [
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
+    },
+    {
+      path: "/register", // เพิ่มเส้นทาง Register.vue
+      name: "register",
+      component: Register,
+    },
     {
       path: "/users",
       name: "users",
@@ -40,11 +51,6 @@ export default new Router({
       path: "/user/:userId",
       name: "user",
       component: UserShow,
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: Login,
     },
     {
       path: "/artworks",
