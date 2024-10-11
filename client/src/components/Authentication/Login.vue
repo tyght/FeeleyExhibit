@@ -10,6 +10,7 @@
         <label for="password">Password:</label>
         <input type="password" v-model="credentials.password" />
       </p>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div class="button-group">
         <button type="submit" class="action-button">Login</button>
         <button @click.prevent="goToRegister" class="action-button">
@@ -31,17 +32,29 @@ export default {
         email: "",
         password: "",
       },
+      errorMessage: "", // เพิ่มฟิลด์สำหรับข้อความข้อผิดพลาด
     };
   },
   methods: {
     async login() {
+      if (!this.credentials.email || !this.credentials.password) {
+        this.errorMessage = "กรุณากรอกข้อมูลให้ครบทุกช่อง";
+        return;
+      }
       try {
-        await AuthenService.login(this.credentials);
+        const response = await AuthenService.login(this.credentials);
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // บันทึกข้อมูลผู้ใช้ใน Local Storage
+        this.$store.dispatch("setUser", response.data.user); // อัปเดต Vuex Store
         this.$router.push({ name: "HomePage" });
       } catch (err) {
         console.error("Login failed:", err);
+        this.errorMessage =
+          err.response && err.response.data && err.response.data.error
+            ? err.response.data.error
+            : "การเข้าสู่ระบบล้มเหลว กรุณาลองอีกครั้ง";
       }
     },
+
     goToRegister() {
       this.$router.push({ name: "register" });
     },
@@ -77,5 +90,10 @@ input {
 }
 .action-button:hover {
   background-color: #45a049;
+}
+.error-message {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
 }
 </style>

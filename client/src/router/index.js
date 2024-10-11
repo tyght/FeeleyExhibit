@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import HomePage from "@/components/Home Page & Search/HomePage.vue";
 
 import UserIndex from "@/components/UserProfile/UserIndex.vue";
 import UserEdit from "@/components/UserProfile/EditUser.vue";
@@ -22,6 +23,11 @@ Vue.use(Router);
 const router = new Router({
   mode: "history",
   routes: [
+    {
+      path: "/",
+      name: "HomePage",
+      component: HomePage,
+    },
     {
       path: "/users",
       name: "users",
@@ -85,7 +91,6 @@ const router = new Router({
   ],
 });
 
-// การตรวจสอบการเข้าสู่ระบบ
 router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register"];
   const authRequired = !publicPages.includes(to.path);
@@ -93,6 +98,10 @@ router.beforeEach((to, from, next) => {
 
   if (authRequired && !loggedIn) {
     return next("/login");
+  }
+
+  if ((to.path === "/login" || to.path === "/register") && loggedIn) {
+    return next("/");
   }
 
   next();

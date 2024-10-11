@@ -3,8 +3,8 @@
     <h1>Register</h1>
     <form @submit.prevent="register">
       <p>
-        <label for="name">Name:</label>
-        <input type="text" v-model="user.name" />
+        <label for="username">Username:</label>
+        <input type="text" v-model="user.username" />
       </p>
       <p>
         <label for="email">Email:</label>
@@ -15,8 +15,8 @@
         <input type="password" v-model="user.password" />
       </p>
       <button type="submit">Register</button>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
+    <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       user: {
-        name: "",
+        username: "",
         email: "",
         password: "",
       },
@@ -43,7 +43,9 @@ export default {
       } catch (err) {
         console.error("Registration failed:", err);
         this.errorMessage =
-          err.response?.data?.error || "Registration failed. Please try again.";
+          err.response && err.response.data && err.response.data.error
+            ? err.response.data.error
+            : "Registration failed. Please try again.";
       }
     },
   },
@@ -65,9 +67,5 @@ input {
 }
 button {
   padding: 10px 20px;
-}
-.error {
-  color: red;
-  font-weight: bold;
 }
 </style>

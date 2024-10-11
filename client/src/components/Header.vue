@@ -1,44 +1,25 @@
-<template>
-  <div>
-    <header v-if="isLoggedIn">
-      <h1>FeeleyExhibit</h1>
-      <nav>
-        <router-link to="/">Home</router-link>
-        <router-link to="/user/:userId">Profile</router-link>
-        <router-link to="/notifications">Notifications</router-link>
-        <button @click="logout">Logout</button>
-      </nav>
-    </header>
-  </div>
-</template>
-
 <script>
+import { mapState } from "vuex";
+
 export default {
-  data() {
-    return {};
-  },
   computed: {
+    ...mapState({
+      user: (state) => state.user,
+    }),
     isLoggedIn() {
-      // ตรวจสอบสถานะการเข้าสู่ระบบ
-      return !!localStorage.getItem("user");
+      return !!this.user;
+    },
+    userId() {
+      return this.user ? this.user.id : null;
     },
   },
   methods: {
     logout() {
+      this.$store.dispatch("setToken", null);
+      this.$store.dispatch("setUser", null);
       localStorage.removeItem("user");
       this.$router.push("/login");
     },
   },
 };
 </script>
-
-<style scoped>
-header {
-  background-color: green;
-  padding: 10px;
-}
-nav {
-  display: flex;
-  gap: 10px;
-}
-</style>

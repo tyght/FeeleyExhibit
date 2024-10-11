@@ -1,6 +1,5 @@
-// models/Artwork.js
-const { Sequelize, DataTypes, Model } = require("sequelize");
-const sequelize = require("../config/config");
+const { DataTypes, Model } = require("sequelize");
+const { sequelize } = require("../config/config"); // นำเข้า sequelize อย่างถูกต้อง
 
 class Artwork extends Model {}
 
@@ -12,23 +11,19 @@ Artwork.init(
     },
     description: {
       type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    artistName: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
-    category: {
+    imageUrl: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    imagePath: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    createdBy: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
   },
   {
-    sequelize,
+    sequelize, // ส่ง sequelize instance ให้กับการกำหนดโมเดล
     modelName: "Artwork",
   }
 );

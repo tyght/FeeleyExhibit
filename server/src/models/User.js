@@ -1,6 +1,5 @@
-// models/User.js
 const { DataTypes, Model } = require("sequelize");
-const sequelize = require("../config/config");
+const { sequelize } = require("../config/config"); // นำเข้า sequelize อย่างถูกต้อง
 
 class User extends Model {}
 
@@ -28,7 +27,7 @@ User.init(
     },
   },
   {
-    sequelize,
+    sequelize, // ส่ง sequelize instance ให้กับการกำหนด Model
     modelName: "User",
   }
 );

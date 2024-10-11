@@ -1,15 +1,16 @@
 const { Sequelize } = require("sequelize");
 
 const config = {
-  database: "database_name",
-  username: "username",
-  password: "password",
+  database: "nvwebblog-db",
+  username: "",
+  password: "",
   options: {
     host: "localhost",
     dialect: "sqlite",
     storage: "./nvwebblog-db.sqlite",
+    logging: false,
     define: {
-      freezeTableName: true,
+      freezeTableName: true, // ใช้เพื่อป้องกันการเปลี่ยนชื่อตารางเป็นพหูพจน์
     },
   },
 };
@@ -21,4 +22,8 @@ const sequelize = new Sequelize(
   config.options
 );
 
-module.exports = sequelize;
+module.exports = {
+  sequelize, // ส่งออก instance ของ Sequelize
+  port: 3000,
+  jwtSecret: "4321",
+};
