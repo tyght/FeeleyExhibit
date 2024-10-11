@@ -1,14 +1,10 @@
-import axios from "axios";
-
-const Api = axios.create({
-  baseURL: "http://localhost:3000",
-});
+import Api from '@/services/Api'
 
 export default {
-  login(credentials) {
-    return Api.post("/login", credentials);
-  },
-  register(user) {
-    return Api.post("/register", user);
-  },
-};
+    register(credentials) {
+        return Api().post('register', credentials)
+    },
+    login(credentials) {
+        return Api().post('login', credentials)
+    }
+}

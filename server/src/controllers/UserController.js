@@ -1,5 +1,3 @@
-// controllers/UserController.js
-
 const {User} = require('../models');
 
 module.exports = {

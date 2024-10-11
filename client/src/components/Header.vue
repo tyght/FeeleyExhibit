@@ -1,62 +1,53 @@
 <template>
-  <header v-if="isLoggedIn">
+  <div class="header">
     <h1>FeeleyExhibit</h1>
     <nav>
-      <router-link to="/HomePage">Home</router-link>
-      <router-link :to="`/user/${userId}`">Profile</router-link>
-      <router-link to="/notifications">Notifications</router-link>
-      <button @click="logout">Logout</button>
+      <ul>
+        <li><router-link to="/">Home</router-link></li>
+        <li><router-link to="/profile">Profile</router-link></li>
+        <li><router-link to="/notifications">Notifications</router-link></li>
+        <li><button @click="logout">Logout</button></li>
+      </ul>
     </nav>
-  </header>
+  </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
-  computed: {
-    ...mapState({
-      user: (state) => state.user,
-    }),
-    isLoggedIn() {
-      return !!this.user;
-    },
-    userId() {
-      return this.user ? this.user.id : null;
-    },
-  },
+  name: "Header",
   methods: {
     logout() {
-      this.$store.dispatch("setUser", null);
       this.$store.dispatch("setToken", null);
-      this.$router.push("/login");
+      this.$router.push({ name: "login" });
     },
   },
 };
 </script>
 
 <style scoped>
-header {
-  background-color: green;
-  padding: 10px;
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 20px;
+  background-color: #4caf50;
   color: white;
 }
-nav {
+nav ul {
+  list-style-type: none;
   display: flex;
-  gap: 15px;
+  gap: 20px;
+}
+nav li {
+  cursor: pointer;
 }
 button {
-  padding: 8px 12px;
-  background-color: #ff6666;
+  background-color: transparent;
   color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
 }
 button:hover {
-  background-color: #ff4d4d;
+  text-decoration: underline;
 }
 </style>
