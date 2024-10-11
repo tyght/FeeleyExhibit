@@ -2,7 +2,7 @@
   <header v-if="isLoggedIn">
     <h1>FeeleyExhibit</h1>
     <nav>
-      <router-link to="/HomePage">Home</router-link>
+      <router-link to="/">Home</router-link>
       <router-link :to="`/user/${userId}`">Profile</router-link>
       <router-link to="/notifications">Notifications</router-link>
       <button @click="logout">Logout</button>
@@ -11,23 +11,24 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   computed: {
+    ...mapState({
+      user: (state) => state.user,
+    }),
     isLoggedIn() {
-      return !!localStorage.getItem("user");
+      return !!this.user; // ตรวจสอบสถานะการเข้าสู่ระบบจาก Vuex state
     },
     userId() {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        return user ? user.id : null;
-      } catch (error) {
-        return null;
-      }
+      return this.user ? this.user.id : null; // ดึง userId จาก Vuex
     },
   },
   methods: {
     logout() {
-      localStorage.removeItem("user");
+      this.$store.commit("setToken", null); // ล้าง token ใน Vuex
+      this.$store.commit("setUser", null); // ล้างข้อมูล user ใน Vuex
       this.$router.push("/login");
     },
   },

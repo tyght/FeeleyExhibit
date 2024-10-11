@@ -32,26 +32,27 @@ export default {
         email: "",
         password: "",
       },
-      errorMessage: "", // เพิ่มฟิลด์สำหรับข้อความข้อผิดพลาด
+      errorMessage: "",
     };
   },
   methods: {
     async login() {
       if (!this.credentials.email || !this.credentials.password) {
-        this.errorMessage = "กรุณากรอกข้อมูลให้ครบทุกช่อง";
+        this.errorMessage = "Please fill in all fields.";
         return;
       }
       try {
         const response = await AuthenService.login(this.credentials);
-        localStorage.setItem("user", JSON.stringify(response.data.user)); // บันทึกข้อมูลผู้ใช้ใน Local Storage
-        this.$store.dispatch("setUser", response.data.user); // อัปเดต Vuex Store
+        // บันทึกข้อมูลผู้ใช้ลงใน Vuex
+        this.$store.dispatch("setUser", response.data.user);
+        this.$store.dispatch("setToken", response.data.token);
         this.$router.push({ name: "HomePage" });
       } catch (err) {
         console.error("Login failed:", err);
         this.errorMessage =
           err.response && err.response.data && err.response.data.error
             ? err.response.data.error
-            : "การเข้าสู่ระบบล้มเหลว กรุณาลองอีกครั้ง";
+            : "Login failed. Please try again.";
       }
     },
 

@@ -21,7 +21,7 @@ import NotificationList from "@/components/Notifications/NotificationList.vue";
 Vue.use(Router);
 
 const router = new Router({
-  mode: "history",
+  mode: "hash", // เปลี่ยนจาก "history" เป็น "hash"
   routes: [
     {
       path: "/",
