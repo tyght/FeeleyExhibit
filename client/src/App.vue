@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <navigationBar />
+    <!-- แสดง navigationBar เฉพาะเมื่อไม่ได้อยู่ในหน้า Login หรือ Register -->
+    <navigationBar v-if="showHeader" />
     <router-view />
   </div>
 </template>
@@ -8,6 +9,12 @@
 <script>
 export default {
   name: "App",
+  computed: {
+    showHeader() {
+      // ตรวจสอบว่าเส้นทางปัจจุบันไม่ใช่ /login หรือ /register
+      return this.$route.name !== "login" && this.$route.name !== "register";
+    },
+  },
   mounted() {
     const isLoggedIn = !!localStorage.getItem("token"); // ตรวจสอบว่ามี token ใน localStorage หรือไม่
     if (!isLoggedIn) {
@@ -22,9 +29,7 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
   color: #2c3e50;
-  /* margin-top: 60px; */
 }
 /* Fade transition */
 .fade-enter,
