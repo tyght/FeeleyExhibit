@@ -1,3 +1,4 @@
+//App.vue
 <template>
   <div id="app">
     <!-- แสดง navigationBar เฉพาะเมื่อไม่ได้อยู่ในหน้า Login หรือ Register -->

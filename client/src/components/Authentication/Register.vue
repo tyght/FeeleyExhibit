@@ -1,11 +1,10 @@
-// Register.vue
 <template>
   <div>
     <h1>Register</h1>
     <form @submit.prevent="register">
       <p>
-        <label for="name">Name:</label>
-        <input type="text" v-model="user.name" />
+        <label for="username">Username:</label>
+        <input type="text" v-model="user.username" />
       </p>
       <p>
         <label for="email">Email:</label>
@@ -28,7 +27,7 @@ export default {
   data() {
     return {
       user: {
-        name: "",
+        username: "", // เปลี่ยนจาก name เป็น username
         email: "",
         password: "",
       },
@@ -37,8 +36,9 @@ export default {
   methods: {
     async register() {
       try {
-        await AuthenService.register(this.user);
-        this.$router.push({ name: "Login" });
+        const response = await AuthenService.register(this.user);
+        console.log("Registration successful:", response);
+        this.$router.push({ name: "login" });
       } catch (err) {
         console.error("Registration failed:", err);
       }
@@ -46,21 +46,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-form {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-}
-input {
-  width: calc(100% - 20px);
-  padding: 8px;
-  margin-bottom: 10px;
-}
-button {
-  padding: 10px 20px;
-}
-</style>

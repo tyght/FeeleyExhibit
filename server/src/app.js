@@ -1,28 +1,25 @@
-let express = require('express');
-// import body parser
-let bodyParser = require('body-parser');
-const cors = require('cors');
-const { sequelize } = require('./models');
-const config = require('./config/config');
-
+// server/src/app.js
+require("dotenv").config(); // โหลดค่า .env
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const { sequelize } = require("./models");
+const config = require("./config/config");
 
 const app = express();
-// use body parser middleware
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use('/assets', express.static('public'));
+app.use("/assets", express.static("public"));
 
-// import routes
+require("./userPassport");
+require("./routes")(app);
 
-require('./userPassport');
-require('./routes')(app);
-
-
-let port = config.port;
+let port = config.port || 8081;
 
 sequelize.sync({ force: false }).then(() => {
-    app.listen(port, function () {
-        console.log('Server running on ' + port)
-    })
-})
+  app.listen(port, function () {
+    console.log("Server running on " + port);
+  });
+});

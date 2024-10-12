@@ -1,3 +1,4 @@
+//Login.vue
 <template>
   <div>
     <h1>Login</h1>
@@ -35,7 +36,8 @@ export default {
   methods: {
     async login() {
       try {
-        await AuthenService.login(this.credentials);
+        const response = await AuthenService.login(this.credentials);
+        localStorage.setItem("token", response.data.token); // เก็บ token ที่ได้จาก server
         this.$router.push({ name: "HomePage" }).catch((err) => {
           if (err.name !== "NavigationDuplicated") {
             throw err;
@@ -46,7 +48,7 @@ export default {
       }
     },
     goToRegister() {
-      this.$router.push({ name: "register" }); // ใช้ router push เพื่อย้ายไปหน้า Register.vue
+      this.$router.push({ name: "register" }); // เพิ่ม method นี้เพื่อเปลี่ยนเส้นทางไปหน้า Register
     },
   },
 };
