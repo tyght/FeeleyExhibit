@@ -1,4 +1,3 @@
-// PostArtwork.vue
 <template>
   <div>
     <h1>Post Your Artwork</h1>
@@ -73,8 +72,8 @@ export default {
         formData.append("image", this.artwork.image);
       }
       try {
-        await this.$store.dispatch("postArtwork", formData);
-        this.$router.push({ name: "home" });
+        await this.$store.dispatch("postArtwork", formData); // ใช้ action ของ Vuex ในการโพสต์งานศิลปะ
+        this.$router.push("/artworks");
       } catch (error) {
         console.error("Error posting artwork:", error);
         alert("Failed to post artwork. Please try again.");

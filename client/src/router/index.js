@@ -6,7 +6,7 @@ import UserEdit from "@/components/UserProfile/EditUser.vue";
 import UserCreate from "@/components/UserProfile/CreateUser.vue";
 import UserShow from "@/components/UserProfile/UserProfile.vue";
 import Login from "@/components/Authentication/Login.vue";
-import Register from "@/components/Authentication/Register.vue"; // เพิ่มการนำเข้า Register.vue
+import Register from "@/components/Authentication/Register.vue"; // นำเข้า Register.vue
 import HomePage from "@/components/Home Page & Search/HomePage.vue"; // นำเข้า HomePage.vue
 
 import CommentIndex from "@/components/Interaction/CommentsSection.vue";
@@ -29,7 +29,7 @@ export default new Router({
       component: Login,
     },
     {
-      path: "/register", // เพิ่มเส้นทาง Register.vue
+      path: "/register", // เส้นทางสำหรับ Register.vue
       name: "register",
       component: Register,
     },
@@ -56,7 +56,7 @@ export default new Router({
     {
       path: "/home",
       name: "HomePage",
-      component: HomePage, // เพิ่มเส้นทางไปที่ HomePage
+      component: HomePage, // เส้นทางไปที่ HomePage
     },
     {
       path: "/artworks",
@@ -90,7 +90,7 @@ export default new Router({
     },
     {
       path: "*",
-      redirect: "/login", // กรณีอื่นๆ ให้ redirect ไปที่หน้า login
+      redirect: "/login", // กรณีอื่นๆ redirect ไปที่หน้า login
     },
   ],
 });

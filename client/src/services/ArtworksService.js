@@ -1,19 +1,16 @@
-import Api from "./Api";
+import Api from "@/services/Api";
 
 export default {
-    index() {
-        return Api().get("artworks");
-    },
-    show(artworkId) {
-        return Api().get(`artworks/${artworkId}`);
-    },
-    create(artwork) {
-        return Api().post("artworks", artwork);
-    },
-    update(artworkId, artwork) {
-        return Api().put(`artworks/${artworkId}`, artwork);
-    },
-    delete(artwork) {
-        return Api().delete(`artworks/${artwork.id}`);
-    },
+  getAllArtworks() {
+    return Api().get("artworks");
+  },
+  getArtworkById(id) {
+    return Api().get(`artwork/${id}`);
+  },
+  postArtwork(artworkData) {
+    return Api().post("artwork", artworkData);
+  },
+  getMyArtworks() {
+    return Api().get("my-artworks"); // API สำหรับดึงงานศิลปะของผู้ใช้เอง
+  },
 };
