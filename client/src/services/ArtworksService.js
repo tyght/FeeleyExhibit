@@ -1,16 +1,24 @@
+//ArtworksService.js
 import Api from "@/services/Api";
 
 export default {
+  postArtwork(formData) {
+    const token = localStorage.getItem("token");
+    return Api().post("artwork", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
   getAllArtworks() {
     return Api().get("artworks");
   },
-  getArtworkById(id) {
-    return Api().get(`artwork/${id}`);
-  },
-  postArtwork(artworkData) {
-    return Api().post("artwork", artworkData);
-  },
   getMyArtworks() {
-    return Api().get("my-artworks"); // API สำหรับดึงงานศิลปะของผู้ใช้เอง
+    const token = localStorage.getItem("token");
+    return Api().get("/my-artworks", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };

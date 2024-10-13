@@ -1,5 +1,4 @@
-// server/src/controllers/UserAuthenController.js
-const { User } = require("../models");
+const { User } = require("../models"); // นำเข้าโมเดล User
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
@@ -24,6 +23,7 @@ module.exports = {
   async login(req, res) {
     try {
       const { email, password } = req.body;
+      console.log("Login attempt:", email); // ตรวจสอบอีเมลที่ส่งมา
       const user = await User.findOne({ where: { email } });
       if (!user) {
         return res
@@ -36,14 +36,9 @@ module.exports = {
           .status(401)
           .send({ error: "ไม่พบผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
       }
-
-      // ใช้ environment เพื่ออ่านค่า jwtSecret อย่างถูกต้อง
       const environment = process.env.NODE_ENV || "development";
       const jwtSecret = config[environment].jwtSecret;
-
-      const token = jwt.sign({ id: user.id }, jwtSecret, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: "1h" });
       res.status(200).send({ user, token });
     } catch (err) {
       console.error("Login Error: ", err);

@@ -33,8 +33,26 @@
         />
       </div>
       <div>
-        <label for="file">Upload Image:</label>
-        <input type="file" @change="onFileChange" id="file" accept="image/*" />
+        <label for="file">Upload Images:</label>
+        <input
+          type="file"
+          multiple
+          @change="onFileChange"
+          id="file"
+          accept="image/*"
+        />
+      </div>
+      <div v-if="images.length > 0">
+        <h3>Select Cover Image:</h3>
+        <div v-for="(image, index) in images" :key="index">
+          <img :src="image.preview" :alt="`Image ${index + 1}`" />
+          <input
+            type="radio"
+            :value="index"
+            v-model="artwork.coverImageIndex"
+          />
+          Set as cover
+        </div>
       </div>
       <button type="submit">Post Artwork</button>
     </form>
@@ -51,16 +69,19 @@ export default {
         description: "",
         category: "painting",
         tags: "",
-        image: null,
+        images: [], // เก็บไฟล์ที่อัปโหลด
+        coverImageIndex: 0, // เก็บดัชนีของไฟล์ที่เลือกเป็นภาพปก
       },
+      images: [], // เก็บ preview ของไฟล์ที่อัปโหลด
     };
   },
   methods: {
     onFileChange(event) {
-      const file = event.target.files[0];
-      if (file) {
-        this.artwork.image = file;
-      }
+      this.artwork.images = Array.from(event.target.files);
+      this.images = this.artwork.images.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
     },
     async submitArtwork() {
       const formData = new FormData();
@@ -68,11 +89,14 @@ export default {
       formData.append("description", this.artwork.description);
       formData.append("category", this.artwork.category);
       formData.append("tags", this.artwork.tags);
-      if (this.artwork.image) {
-        formData.append("image", this.artwork.image);
-      }
+      formData.append("coverImageIndex", this.artwork.coverImageIndex); // ส่งข้อมูลภาพปกไปด้วย
+
+      this.artwork.images.forEach((file) => {
+        formData.append("artworkPhotos", file);
+      });
+
       try {
-        await this.$store.dispatch("postArtwork", formData); // ใช้ action ของ Vuex ในการโพสต์งานศิลปะ
+        await this.$store.dispatch("postArtwork", formData);
         this.$router.push("/artworks");
       } catch (error) {
         console.error("Error posting artwork:", error);
@@ -84,30 +108,9 @@ export default {
 </script>
 
 <style scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 400px;
-  margin: auto;
-}
-label {
-  font-weight: bold;
-}
-input,
-textarea,
-select {
-  padding: 8px;
-  font-size: 1em;
-}
-button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #45a049;
+img {
+  width: 100px;
+  height: auto;
+  margin: 10px;
 }
 </style>

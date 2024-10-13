@@ -1,9 +1,10 @@
+//server/src/models/index.js
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
-const config = require("../config/config"); // ดึง config ที่เก็บค่า dialect และอื่นๆ
-const env = process.env.NODE_ENV || "development"; // ใช้ environment ปัจจุบัน (development เป็นค่า default)
-const dbConfig = config[env]; // ดึง config ตาม environment
+const config = require("../config/config");
+const env = process.env.NODE_ENV || "development";
+const dbConfig = config[env];
 
 const sequelize = new Sequelize(
   dbConfig.database,
@@ -11,9 +12,9 @@ const sequelize = new Sequelize(
   dbConfig.password,
   {
     host: dbConfig.host,
-    dialect: dbConfig.dialect, // ใช้ dialect จาก config
-    storage: dbConfig.storage, // ถ้าใช้ sqlite ต้องระบุ storage ด้วย
-    logging: false, // ปิดการแสดง log ของ sequelize
+    dialect: dbConfig.dialect,
+    storage: dbConfig.storage,
+    logging: false,
   }
 );
 
@@ -25,7 +26,7 @@ fs.readdirSync(__dirname)
     const model = require(path.join(__dirname, file))(
       sequelize,
       Sequelize.DataTypes
-    );
+    ); // ส่ง DataTypes ด้วย
     db[model.name] = model;
   });
 

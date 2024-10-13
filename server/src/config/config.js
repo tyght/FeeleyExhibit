@@ -1,23 +1,28 @@
-// server/src/config/config.js
 module.exports = {
   development: {
-    username: process.env.DB_USER || "root",
-    password: process.env.DB_PASS || "",
-    database: process.env.DB_NAME || "nvWebblogDb",
-    host: process.env.DB_HOST || "127.0.0.1",
+    username: "root",
+    password: null,
+    database: "database_development",
+    host: "127.0.0.1",
+    dialect: "sqlite", // กำหนดให้ใช้ sqlite
+    storage: "./database.sqlite",
+    jwtSecret: "your_development_secret_key", // เพิ่ม jwtSecret
+  },
+  test: {
+    username: "root",
+    password: null,
+    database: "database_test",
+    host: "127.0.0.1",
     dialect: "sqlite",
-    storage: "./nvwebblog-db.sqlite",
-    port: process.env.PORT || 8081,
-    jwtSecret: process.env.JWT_SECRET || "your_development_secret",
+    storage: "./test.sqlite",
+    jwtSecret: "your_test_secret_key", // เพิ่ม jwtSecret
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: "sqlite",
-    storage: "./nvwebblog-db.sqlite",
-    port: process.env.PORT || 8081,
-    jwtSecret: process.env.JWT_SECRET || "your_production_secret",
+    username: "root",
+    password: null,
+    database: "database_production",
+    host: "127.0.0.1",
+    dialect: "mysql",
+    jwtSecret: process.env.JWT_SECRET || "your_production_secret_key", // เพิ่ม jwtSecret
   },
 };

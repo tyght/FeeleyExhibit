@@ -1,4 +1,3 @@
-//Login.vue
 <template>
   <div>
     <h1>Login</h1>
@@ -21,8 +20,6 @@
 </template>
 
 <script>
-import AuthenService from "@/services/AuthenService";
-
 export default {
   name: "Login",
   data() {
@@ -33,11 +30,18 @@ export default {
       },
     };
   },
+  computed: {
+    isUserLoggedIn() {
+      return this.$store.getters.isUserLoggedIn; // ใช้ Vuex getter เพื่อตรวจสอบการเข้าสู่ระบบ
+    },
+  },
   methods: {
     async login() {
       try {
-        const response = await AuthenService.login(this.credentials);
-        localStorage.setItem("token", response.data.token); // เก็บ token ที่ได้จาก server
+        // เรียกใช้งาน Vuex action สำหรับการ login
+        await this.$store.dispatch("login", this.credentials);
+
+        // นำผู้ใช้ไปยังหน้า HomePage หลังจาก login สำเร็จ
         this.$router.push({ name: "HomePage" }).catch((err) => {
           if (err.name !== "NavigationDuplicated") {
             throw err;
@@ -48,7 +52,7 @@ export default {
       }
     },
     goToRegister() {
-      this.$router.push({ name: "register" }); // เพิ่ม method นี้เพื่อเปลี่ยนเส้นทางไปหน้า Register
+      this.$router.push({ name: "register" }); // เปลี่ยนเส้นทางไปยังหน้า Register
     },
   },
 };

@@ -4,9 +4,14 @@
     <nav>
       <ul>
         <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/profile">Profile</router-link></li>
-        <li><router-link to="/notifications">Notifications</router-link></li>
-        <li><button @click="logout">Logout</button></li>
+        <li v-if="isUserLoggedIn">
+          <router-link to="/profile">Profile</router-link>
+        </li>
+        <li v-if="isUserLoggedIn">
+          <router-link to="/notifications">Notifications</router-link>
+        </li>
+        <li v-if="isUserLoggedIn"><button @click="logout">Logout</button></li>
+        <li v-else><router-link to="/login">Login</router-link></li>
       </ul>
     </nav>
   </div>
@@ -14,10 +19,16 @@
 
 <script>
 export default {
-  name: "Header",
+  computed: {
+    isUserLoggedIn() {
+      const loggedIn = this.$store.getters.isUserLoggedIn;
+      console.log("Header.vue - Is User Logged In:", loggedIn);
+      return loggedIn;
+    },
+  },
   methods: {
     logout() {
-      this.$store.dispatch("setToken", null);
+      this.$store.dispatch("logout");
       this.$router.push({ name: "login" });
     },
   },

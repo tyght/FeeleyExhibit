@@ -1,17 +1,28 @@
-const passport = require('passport')
+//isAuthenController.js
+const passport = require("passport");
+const JwtStrategy = require("passport-jwt").Strategy;
+const ExtractJwt = require("passport-jwt").ExtractJwt;
+const { User } = require("../models");
 
-module.exports = function (req, res, next) {
-    /*console.log('*** user data ***')
-    console.log(res)*/
-    passport.authenticate('user', 'jwt', function (err, user) {
-        //if (err || !user) {
-        if (err || !user) {
-            res.status(403).send({
-                error: 'you do not have access to this resource'
-            })
-        } else {
-            req.user = user
-            next()
-        }
-    })(req, res, next)
-}
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET || "your_jwt_secret",
+};
+
+// กำหนดกลยุทธ์การใช้ JWT
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const user = await User.findByPk(jwt_payload.id);
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err, false);
+    }
+  })
+);
+
+module.exports = passport.authenticate("jwt", { session: false });

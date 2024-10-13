@@ -1,53 +1,67 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
-import ArtworksService from "@/services/ArtworksService"; // นำเข้า service สำหรับงานศิลปะ
+import AuthenService from "@/services/AuthenService";
+import ArtworksService from "@/services/ArtworksService";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   strict: true,
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      storage: window.localStorage, // ตรวจสอบว่าใช้ localStorage
+    }),
+  ],
   state: {
-    token: null,
     user: null,
-    isUserLoggedIn: false,
-    artworks: [], // เพิ่ม state สำหรับเก็บงานศิลปะทั้งหมด
+    token: null,
+    artworks: [],
   },
   mutations: {
-    setToken(state, token) {
-      state.token = token;
-      state.isUserLoggedIn = !!token;
-    },
     setUser(state, user) {
       state.user = user;
     },
-    setArtworks(state, artworks) {
-      state.artworks = artworks; // กำหนดงานศิลปะใน state
+    setToken(state, token) {
+      state.token = token;
+    },
+    clearUserAndToken(state) {
+      state.user = null;
+      state.token = null;
     },
     addArtwork(state, artwork) {
-      state.artworks.push(artwork); // เพิ่มงานศิลปะใหม่ใน state
+      state.artworks.push(artwork); // จัดการการเพิ่มผลงานศิลปะ
+    },
+  },
+  getters: {
+    isUserLoggedIn: (state) => {
+      return !!state.token && !!state.user; // ตรวจสอบว่ามี token และ user อยู่หรือไม่
     },
   },
   actions: {
-    setToken({ commit }, token) {
-      commit("setToken", token);
-    },
-    setUser({ commit }, user) {
-      commit("setUser", user);
-    },
-    async fetchArtworks({ commit }) {
+    async login({ commit }, credentials) {
       try {
-        const response = await ArtworksService.getAllArtworks();
-        commit("setArtworks", response.data);
+        const response = await AuthenService.login(credentials);
+        const { user, token } = response.data;
+
+        // บันทึก token และ user ใน state และ localStorage
+        localStorage.setItem("token", token);
+        commit("setUser", user);
+        commit("setToken", token);
       } catch (error) {
-        console.error("Error fetching artworks:", error);
+        console.error("Login error:", error);
+        throw error;
       }
+    },
+    logout({ commit }) {
+      // ลบข้อมูลการเข้าสู่ระบบจาก state และ localStorage
+      commit("clearUserAndToken");
+      localStorage.removeItem("token");
     },
     async postArtwork({ commit }, artworkData) {
       try {
         const response = await ArtworksService.postArtwork(artworkData);
-        commit("addArtwork", response.data); // เมื่อโพสต์สำเร็จให้เพิ่มงานศิลปะใหม่ใน state
+        commit("addArtwork", response.data);
       } catch (error) {
         console.error("Error posting artwork:", error);
         throw error;
